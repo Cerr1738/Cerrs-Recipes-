@@ -23,6 +23,12 @@ class Recipe(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    # TheMealDB integration fields
+    mealdb_id = models.CharField(max_length=20, blank=True, null=True, unique=True)
+    thumbnail_url = models.URLField(blank=True, null=True)
+    video_url = models.URLField(blank=True, null=True)
+    source_url = models.URLField(blank=True, null=True)
+    
     class Meta:
         ordering = ['-created_at']
     
