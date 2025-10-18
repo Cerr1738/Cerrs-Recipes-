@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerr's Recipes - Recipe Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            
+        }
+
+
+        header {
+            background: white;
+            padding: 25px 30px;
+            
+          
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+         
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .auth-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .content {
+            background: white;
+            /* border-radius: 15px; */
+            padding: 30px;
+            /* box-shadow: 0 10px 30px rgba(0,0,0,0.2); */
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .tab:hover {
+            background: #f8f8f8;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        select {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .recipe-card {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .recipe-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .recipe-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .recipe-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .recipe-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .prep-time {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .external-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #27ae60;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .recipe-detail {
+            line-height: 1.8;
+        }
+
+        .recipe-detail h3 {
+            margin: 20px 0 10px;
+            color: #667eea;
+        }
+
+        .recipe-detail img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .ingredients-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .ingredients-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .ingredients-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .recipe-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 13px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .video-link {
+            display: inline-block;
+            margin: 10px 0;
+            padding: 10px 15px;
+            background: #ff0000;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .video-link:hover {
+            background: #cc0000;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🍳 Cerr's Recipes</div>
+            <div class="auth-section">
+                <div id="loggedOutSection">
+                    <button class="btn btn-secondary" onclick="showLoginModal()">Login</button>
+                    <button class="btn btn-primary" onclick="showRegisterModal()">Register</button>
+                </div>
+                <div id="loggedInSection" class="hidden">
+                    <span class="user-info">👤 <span id="username"></span></span>
+                    <button class="btn btn-secondary" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('recipes', event)">Browse Recipes</div>
+                <!-- <div class="tab" onclick="showTab('mealdb', event)">Discover from MealDB</div> -->
+                <div class="tab hidden" onclick="showTab('myrecipes', event)" id="myRecipesTab">My Recipes</div>
+                <div class="tab hidden" onclick="showTab('create', event)" id="createTab">Create Recipe</div>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <!-- Browse Recipes Tab -->
+            <div class="tab-content active" id="recipes">
+                <div class="filters">
+                    <input type="text" class="search-box" placeholder="Search recipes..." id="searchInput" oninput="searchRecipes()">
+                    <select id="categoryFilter" onchange="filterByCategory()">
+                        <option value="">All Categories</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="loadRecipes()">Refresh</button>
+                </div>
+                <div class="recipes-grid" id="recipesGrid"></div>
+            </div>
+
+            <!-- MealDB Discovery Tab -->
+            <!-- <div class="tab-content" id="mealdb">
+                <div class="section-header">
+                    <h2>Discover Recipes from MealDB</h2>
+                    <button class="btn btn-warning" onclick="loadRandomMeal()">🎲 Random Recipe</button>
+                </div>
+                <div class="filters">
+                    <input type="text" class="search-box" placeholder="Search MealDB recipes..." id="mealdbSearchInput">
+                    <button class="btn btn-primary" onclick="searchMealDB()">Search</button>
+                </div>
+                <div class="recipes-grid" id="mealdbGrid"></div>
+            </div> -->
+
+            <!-- My Recipes Tab -->
+            <div class="tab-content" id="myrecipes">
+                <h2 style="margin-bottom: 20px;">My Recipes</h2>
+                <div class="recipes-grid" id="myRecipesGrid"></div>
+            </div>
+
+            <!-- Create Recipe Tab -->
+            <div class="tab-content" id="create">
+                <h2 style="margin-bottom: 20px;">Create New Recipe</h2>
+                <form id="createRecipeForm">
+                    <div class="form-group">
+                        <label>Recipe Title</label>
+                        <input type="text" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Ingredients (comma-separated)</label>
+                        <textarea name="ingredients" required placeholder="e.g., 2 eggs, 1 cup flour, 1/2 cup milk"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Cooking Steps</label>
+                        <textarea name="steps" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Preparation Time (minutes)</label>
+                        <input type="number" name="prep_time" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="category" id="createCategorySelect" required>
+                            <option value="">Select a category</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Recipe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Login to Cerr's Recipes</h2>
+                <button class="close-btn" onclick="closeModal('loginModal')">&times;</button>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Register</h2>
+                <button class="close-btn" onclick="closeModal('registerModal')">&times;</button>
+            </div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" required minlength="8">
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" name="password2" required minlength="8">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Recipe Detail Modal -->
+    <div class="modal" id="recipeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="recipeModalTitle"></h2>
+                <button class="close-btn" onclick="closeModal('recipeModal')">&times;</button>
+            </div>
+            <div class="recipe-detail" id="recipeModalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000/api';
+        let token = localStorage.getItem('token');
+        let currentUser = localStorage.getItem('username');
+
+        // Initialize
+        window.onload = function() {
+            if (token) {
+                showLoggedIn(currentUser);
+            }
+            loadRecipes();
+            loadCategories();
+        };
+
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alertContainer.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        function showTab(tabName, event) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            if (event) {
+                event.target.classList.add('active');
+            }
+            document.getElementById(tabName).classList.add('active');
+
+            if (tabName === 'myrecipes') {
+                loadMyRecipes();
+            } else if (tabName === 'mealdb') {
+                // Auto-load some random recipes when opening MealDB tab
+                if (document.getElementById('mealdbGrid').children.length === 0) {
+                    loadRandomMeal();
+                }
+            }
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showLoginModal() {
+            showModal('loginModal');
+        }
+
+        function showRegisterModal() {
+            showModal('registerModal');
+        }
+
+        function showLoggedIn(username) {
+            document.getElementById('loggedOutSection').classList.add('hidden');
+            document.getElementById('loggedInSection').classList.remove('hidden');
+            document.getElementById('username').textContent = username;
+            document.getElementById('myRecipesTab').classList.remove('hidden');
+            document.getElementById('createTab').classList.remove('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            token = null;
+            currentUser = null;
+            document.getElementById('loggedOutSection').classList.remove('hidden');
+            document.getElementById('loggedInSection').classList.add('hidden');
+            document.getElementById('myRecipesTab').classList.add('hidden');
+            document.getElementById('createTab').classList.add('hidden');
+            showAlert('Logged out successfully');
+        }
+
+        // Login Form
+        document.getElementById('loginForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+
+            try {
+                const response = await fetch(`${API_URL}/login/`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    token = result.access;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('username', data.username);
+                    currentUser = data.username;
+                    showLoggedIn(currentUser);
+                    closeModal('loginModal');
+                    showAlert('Login successful!');
+                    e.target.reset();
+                } else {
+                    showAlert('Login failed. Check credentials.', 'error');
+                }
+            } catch (error) {
+                showAlert('Error connecting to server', 'error');
+            }
+        };
+
+        // Register Form
+        document.getElementById('registerForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+
+            if (data.password !== data.password2) {
+                showAlert('Passwords do not match', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/register/`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    closeModal('registerModal');
+                    showAlert('Registration successful! Please login.');
+                    e.target.reset();
+                    showLoginModal();
+                } else {
+                    const error = await response.json();
+                    showAlert(JSON.stringify(error), 'error');
+                }
+            } catch (error) {
+                showAlert('Error connecting to server', 'error');
+            }
+        };
+
+        // Load Categories
+        async function loadCategories() {
+            try {
+                const response = await fetch(`${API_URL}/categories/`);
+                const categories = await response.json();
+                
+                const categoryFilter = document.getElementById('categoryFilter');
+                const createCategorySelect = document.getElementById('createCategorySelect');
+                
+                categories.forEach(cat => {
+                    categoryFilter.innerHTML += `<option value="${cat.name}">${cat.name}</option>`;
+                    createCategorySelect.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+                });
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+
+        // Load Recipes
+        async function loadRecipes(query = '') {
+            try {
+                const response = await fetch(`${API_URL}/recipes/${query}`);
+                const recipes = await response.json();
+                displayRecipes(recipes, 'recipesGrid');
+            } catch (error) {
+                showAlert('Error loading recipes', 'error');
+            }
+        }
+
+        // Load My Recipes
+        async function loadMyRecipes() {
+            if (!token) return;
+            try {
+                const response = await fetch(`${API_URL}/recipes/my_recipes/`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const recipes = await response.json();
+                displayRecipes(recipes, 'myRecipesGrid', true);
+            } catch (error) {
+                showAlert('Error loading your recipes', 'error');
+            }
+        }
+
+        // Display Recipes
+        function displayRecipes(recipes, gridId, showActions = false) {
+            const grid = document.getElementById(gridId);
+            if (recipes.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>No recipes found</p></div>';
+                return;
+            }
+
+            grid.innerHTML = recipes.map(recipe => `
+                <div class="recipe-card" onclick="showRecipeDetail(${recipe.id})">
+                    ${recipe.thumbnail_url ? `<img src="${recipe.thumbnail_url}" alt="${recipe.title}" class="recipe-image">` : ''}
+                    ${recipe.mealdb_id ? '<span class="external-badge">MealDB</span>' : ''}
+                    <div class="recipe-title">${recipe.title}</div>
+                    <div class="recipe-description">${recipe.description.substring(0, 100)}...</div>
+                    <div class="recipe-meta">
+                        <span class="category-badge">${recipe.category_name || 'Uncategorized'}</span>
+                        <span class="prep-time">⏱️ ${recipe.prep_time} min</span>
+                    </div>
+                    ${showActions ? `
+                        <div class="recipe-actions" onclick="event.stopPropagation()">
+                            <button class="btn btn-danger btn-small" onclick="deleteRecipe(${recipe.id})">Delete</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Show Recipe Detail
+        async function showRecipeDetail(id) {
+            try {
+                const response = await fetch(`${API_URL}/recipes/${id}/`);
+                const recipe = await response.json();
+                
+                document.getElementById('recipeModalTitle').textContent = recipe.title;
+                document.getElementById('recipeModalContent').innerHTML = `
+                    ${recipe.thumbnail_url ? `<img src="${recipe.thumbnail_url}" alt="${recipe.title}">` : ''}
+                    <p><strong>Category:</strong> <span class="category-badge">${recipe.category.name}</span></p>
+                    <p><strong>Prep Time:</strong> ${recipe.prep_time} minutes</p>
+                    <p><strong>Created by:</strong> ${recipe.created_by}</p>
+                    ${recipe.video_url ? `<a href="${recipe.video_url}" target="_blank" class="video-link">📺 Watch Video Tutorial</a>` : ''}
+                    
+                    <h3>Description</h3>
+                    <p>${recipe.description}</p>
+                    
+                    <h3>Ingredients</h3>
+                    <ul class="ingredients-list">
+                        ${recipe.ingredients_list.map(ing => `<li>${ing}</li>`).join('')}
+                    </ul>
+                    
+                    <h3>Steps</h3>
+                    <p style="white-space: pre-line;">${recipe.steps}</p>
+                    
+                    ${recipe.source_url ? `<p><strong>Source:</strong> <a href="${recipe.source_url}" target="_blank">View Original Recipe</a></p>` : ''}
+                `;
+                showModal('recipeModal');
+            } catch (error) {
+                showAlert('Error loading recipe details', 'error');
+            }
+        }
+
+        // Create Recipe
+        document.getElementById('createRecipeForm').onsubmit = async function(e) {
+            e.preventDefault();
+            if (!token) {
+                showAlert('Please login first', 'error');
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+
+            try {
+                const response = await fetch(`${API_URL}/recipes/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showAlert('Recipe created successfully!');
+                    e.target.reset();
+                    showTab('myrecipes', {target: document.getElementById('myRecipesTab')});
+                    loadMyRecipes();
+                } else {
+                    showAlert('Error creating recipe', 'error');
+                }
+            } catch (error) {
+                showAlert('Error connecting to server', 'error');
+            }
+        };
+
+        // Delete Recipe
+        async function deleteRecipe(id) {
+            if (!confirm('Are you sure you want to delete this recipe?')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/recipes/${id}/`, {
+                    method: 'DELETE',
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+
+                if (response.ok) {
+                    showAlert('Recipe deleted successfully');
+                    loadMyRecipes();
+                } else {
+                    showAlert('Error deleting recipe', 'error');
+                }
+            } catch (error) {
+                showAlert('Error connecting to server', 'error');
+            }
+        }
+
+        // Filter and Search
+        function filterByCategory() {
+            const category = document.getElementById('categoryFilter').value;
+            if (category) {
+                loadRecipes(`?category=${category}`);
+            } else {
+                loadRecipes();
+            }
+        }
+
+        function searchRecipes() {
+            const query = document.getElementById('searchInput').value;
+            if (query.length > 2) {
+                loadRecipes(`?search=${query}`);
+            } else if (query.length === 0) {
+                loadRecipes();
+            }
+        }
+
+        // MealDB Functions
+        async function searchMealDB() {
+            if (!token) {
+                showAlert('Please login to search MealDB', 'error');
+                return;
+            }
+
+            const query = document.getElementById('mealdbSearchInput').value;
+            if (!query) {
+                showAlert('Please enter a search term', 'error');
+                return;
+            }
+
+            const grid = document.getElementById('mealdbGrid');
+            grid.innerHTML = '<div class="loading">🔍 Searching MealDB...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/recipes/search_mealdb/?q=${query}`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    displayMealDBRecipes(data.results);
+                } else {
+                    showAlert('Error searching MealDB', 'error');
+                    grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">❌</div><p>Error searching recipes</p></div>';
+                }
+            } catch (error) {
+                showAlert('Error connecting to server', 'error');
+                grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">❌</div><p>Connection error</p></div>';
+            }
+        }
+
+        async function loadRandomMeal() {
+            if (!token) {
+                showAlert('Please login to discover recipes', 'error');
+                return;
+            }
+
+            const grid = document.getElementById('mealdbGrid');
+            grid.innerHTML = '<div class="loading">🎲 Loading random recipe...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/recipes/random_mealdb/`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+
+                if (response.ok) {
+                    const meal = await response.json();
+                    displayMealDBRecipes([meal]);
+                } else {
+                    showAlert('Error loading random recipe', 'error');
+                    grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">❌</div><p>Error loading recipe</p></div>';
+                }
+            } catch (error) {
+                showAlert('Error connecting to server', 'error');
+                grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">❌</div><p>Connection error</p></div>';
+            }
+        }
+
+        function displayMealDBRecipes(meals) {
+            const grid = document.getElementById('mealdbGrid');
+            
+            if (!meals || meals.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔍</div><p>No recipes found. Try a different search!</p></div>';
+                return;
+            }
+
+            grid.innerHTML = meals.map(meal => `
+                <div class="recipe-card">
+                    <span class="external-badge">MealDB</span>
+                    ${meal.strMealThumb ? `<img src="${meal.strMealThumb}" alt="${meal.strMeal}" class="recipe-image">` : ''}
+                    <div class="recipe-title">${meal.strMeal}</div>
+                    <div class="recipe-description">${meal.strCategory} • ${meal.strArea || 'International'}</div>
+                    <div class="recipe-meta">
+                        <span class="category-badge">${meal.strCategory}</span>
+                    </div>
+                    <div class="recipe-actions">
+                        <button class="btn btn-primary btn-small" onclick="viewMealDBDetail('${meal.idMeal}')">View Details</button>
+                        <button class="btn btn-success btn-small" onclick="importFromMealDB('${meal.idMeal}', '${meal.strMeal}')">Import Recipe</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function viewMealDBDetail(mealId) {
+            try {
+                const response = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`);
+                const data = await response.json();
+                
+                if (data.meals && data.meals[0]) {
+                    const meal = data.meals[0];
+                    
+                    // Extract ingredients
+                    const ingredients = [];
+                    for (let i = 1; i <= 20; i++) {
+                        const ingredient = meal[`strIngredient${i}`];
+                        const measure = meal[`strMeasure${i}`];
+                        if (ingredient && ingredient.trim()) {
+                            ingredients.push(`${measure} ${ingredient}`.trim());
+                        }
+                    }
+                    
+                    document.getElementById('recipeModalTitle').textContent = meal.strMeal;
+                    document.getElementById('recipeModalContent').innerHTML = `
+                        ${meal.strMealThumb ? `<img src="${meal.strMealThumb}" alt="${meal.strMeal}">` : ''}
+                        <p><strong>Category:</strong> <span class="category-badge">${meal.strCategory}</span></p>
+                        <p><strong>Cuisine:</strong> ${meal.strArea}</p>
+                        ${meal.strYoutube ? `<a href="${meal.strYoutube}" target="_blank" class="video-link">📺 Watch Video Tutorial</a>` : ''}
+                        
+                        <h3>Ingredients</h3>
+                        <ul class="ingredients-list">
+                            ${ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                        </ul>
+                        
+                        <h3>Instructions</h3>
+                        <p style="white-space: pre-line;">${meal.strInstructions}</p>
+                        
+                        ${meal.strSource ? `<p><strong>Source:</strong> <a href="${meal.strSource}" target="_blank">View Original Recipe</a></p>` : ''}
+                        
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-success" onclick="importFromMealDB('${meal.idMeal}', '${meal.strMeal}'); closeModal('recipeModal')">
+                                Import This Recipe to My Collection
+                            </button>
+                        </div>
+                    `;
+                    showModal('recipeModal');
+                }
+            } catch (error) {
+                showAlert('Error loading meal details', 'error');
+            }
+        }
+
+        async function importFromMealDB(mealId, mealName) {
+            if (!token) {
+                showAlert('Please login to import recipes', 'error');
+                return;
+            }
+
+            if (!confirm(`Import "${mealName}" to your recipe collection?`)) return;
+
+            try {
+                const response = await fetch(`${API_URL}/recipes/import_from_mealdb/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ meal_id: mealId })
+                });
+
+                if (response.ok) {
+                    showAlert(`✅ "${mealName}" imported successfully!`);
+                    loadRecipes(); // Refresh main recipes
+                } else {
+                    const error = await response.json();
+                    if (error.error && error.error.includes('already been imported')) {
+                        showAlert('This recipe has already been imported', 'error');
+                    } else {
+                        showAlert('Error importing recipe', 'error');
+                    }
+                }
+            } catch (error) {
+                showAlert('Error connecting to server', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

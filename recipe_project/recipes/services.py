@@ -30,17 +30,17 @@ class MealDBService:
             print(f"Error fetching meal: {e}")
             return None
     
-    @classmethod
-    def get_random_meal(cls):
-        """Get a random meal"""
-        try:
-            response = requests.get(f'{cls.BASE_URL}/random.php')
-            response.raise_for_status()
-            meals = response.json().get('meals', [])
-            return meals[0] if meals else None
-        except requests.RequestException as e:
-            print(f"Error fetching random meal: {e}")
-            return None
+    # @classmethod
+    # def get_random_meal(cls):
+    #     """Get a random meal"""
+    #     try:
+    #         response = requests.get(f'{cls.BASE_URL}/randomselection.php')
+    #         response.raise_for_status()
+    #         meals = response.json().get('meals', [])
+    #         return meals[0] if meals else None
+    #     except requests.RequestException as e:
+    #         print(f"Error fetching random meal: {e}")
+    #         return None
     
     @classmethod
     def filter_by_category(cls, category):

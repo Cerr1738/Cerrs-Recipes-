@@ -16,3 +16,6 @@ class UserRegistrationView(generics.CreateAPIView):
             'user': UserSerializer(user).data,
             'message': 'User registered successfully'
         }, status=status.HTTP_201_CREATED)
+    
+
+    
